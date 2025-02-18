@@ -1,23 +1,53 @@
-import { useState ,useEffect} from "react";
+import { useState, useEffect } from "react";
+
+const atividadeInicial = {
+  id: 0,
+  titulo: "",
+  prioridade: 0,
+  descricao: "",
+};
 
 export default function AtividadeForm(props) {
-  const [atividade, setAtividade] = useState({})
+  const [atividade, setAtividade] = useState(atividadeAtual());
 
   useEffect(() => {
-    console.log("Teste 1");
-    console.log(atividade);
-    
-  }, [atividade])
+    if (props.atividadeSelecionoda.id !== 0)
+      setAtividade(props.atividadeSelecionoda);
+  }, [props.atividadeSelecionoda]);
 
   const inputTextHandler = (e) => {
     const { name, value } = e.target;
+    setAtividade({ ...atividade, [name]: value });
+  };
 
-    setAtividade({...atividade, [name]: value})
+  function atividadeAtual() {
+    if (props.atividadeSelecionoda.id !== 0) {
+      return props.atividadeSelecionoda;
+    } else {
+      return atividadeInicial;
+    }
   }
+
+  const handleCancelar = (e) => {
+    e.preventDefault();
+    setAtividade(atividadeInicial);
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    if (props.atividadeSelecionoda.id !== 0) {
+      props.atualizarAtividade(atividade);
+      handleCancelar(e);
+    } else {
+      props.addAtividade(atividade);
+    }
+  };
 
   return (
     <>
-      <form className="row g-3">
+      <h1>Atidade(s): {atividade.id !== 0 ? atividade.titulo : ""}</h1>
+      <form className="row g-3" onSubmit={handleSubmit}>
         <div className="col-md-6">
           <label for="id" className="form-label">
             Prioridade
@@ -28,9 +58,7 @@ export default function AtividadeForm(props) {
             name="prioridade"
             value={atividade.prioridade}
             onChange={inputTextHandler}>
-            <option selected>
-              Selecione...
-            </option>
+            <option selected>Selecione...</option>
             <option value="1">Baixa</option>
             <option value="2">Normal</option>
             <option value="3">Alta</option>
@@ -66,12 +94,20 @@ export default function AtividadeForm(props) {
         </div>
 
         <div className="col-12">
-          <button
-            type="submit"
-            className="btn btn-primary"
-            onClick={props.addAtividade}>
-            Add Atividade
-          </button>
+          {atividade.id === 0 || atividade === undefined ? (
+            <button type="submit" className="btn btn-primary">
+              Adicionar
+            </button>
+          ) : (
+            <>
+              <button type="submit" className="btn btn-success me-2">
+                Salvar
+              </button>
+              <button className="btn btn-danger" onClick={handleCancelar}>
+                Cancelar
+              </button>
+            </>
+          )}
         </div>
       </form>
     </>

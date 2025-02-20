@@ -30,6 +30,7 @@ export default function AtividadeForm(props) {
 
   const handleCancelar = (e) => {
     e.preventDefault();
+    props.handleClose();
     setAtividade(atividadeInicial);
   };
 
@@ -38,15 +39,15 @@ export default function AtividadeForm(props) {
 
     if (props.atividadeSelecionoda.id !== 0) {
       props.atualizarAtividade(atividade);
-      handleCancelar(e);
     } else {
       props.addAtividade(atividade);
     }
+
+    handleCancelar(e);
   };
 
   return (
     <>
-      <h1>Atidade(s): {atividade.id !== 0 ? atividade.titulo : ""}</h1>
       <form className="row g-3" onSubmit={handleSubmit}>
         <div className="col-md-6">
           <label for="id" className="form-label">

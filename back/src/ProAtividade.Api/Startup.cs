@@ -30,18 +30,20 @@ namespace ProAtividade.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<DataContext>(
-                options=> options.UseSqlite(Configuration.GetConnectionString("Default"))
+                options => options.UseSqlite(Configuration.GetConnectionString("Default"))
             );
             services.AddControllers()
                     .AddJsonOptions(options =>
                     {
                         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
                     });
-            
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "ProAtividade.Api", Version = "v1" });
             });
+
+            services.AddCors();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -60,7 +62,11 @@ namespace ProAtividade.Api
 
             app.UseAuthorization();
 
-            //Configura rotas aqui:
+            app.UseCors(option => option.AllowAnyHeader()
+                                        .AllowAnyMethod()
+                                        .AllowAnyOrigin());
+
+            //Configura rotas aqui:         
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
